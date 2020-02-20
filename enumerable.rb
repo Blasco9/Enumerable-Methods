@@ -89,4 +89,13 @@ module Enumerable
       self.my_select(&block).size
     end
   end
+
+  def my_map
+    return to_enum(:my_map) unless block_given?
+    arr = []
+    self.my_each do |el|
+      arr << yield(el)
+    end
+    arr
+  end
 end
