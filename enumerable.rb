@@ -1,5 +1,3 @@
-# rubocop: disable Style/CaseEquality
-# rubocop: disable Metrics/ModuleLength, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 module Enumerable
   def my_each
     return to_enum(:my_each) unless block_given?
@@ -130,6 +128,3 @@ module Enumerable
     end
   end
 end
-
-# rubocop: enable Style/CaseEquality
-# rubocop: enable Metrics/ModuleLength, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
