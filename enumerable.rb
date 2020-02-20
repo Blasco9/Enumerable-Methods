@@ -13,18 +13,19 @@ module Enumerable
     return to_enum(:my_each_with_index) unless block_given?
 
     i = 0
-    arr = self.to_a
+    arr = to_a
     while i < arr.size
       yield(arr[i], i)
       i += 1
     end
+    arr
   end
 
   def my_select
     return to_enum(:my_select) unless block_given?
 
     arr = []
-    self.my_each do |el|
+    my_each do |el|
       arr << el if yield(el)
     end
     arr = arr.to_h if Hash === self
@@ -32,9 +33,9 @@ module Enumerable
   end
 
   def my_all?(parameter = nil)
-    return true if parameter.nil? && self.length.zero?
+    return true if parameter.nil? && length.zero?
 
-    self.my_each do |el|
+    my_each do |el|
       if parameter.is_a? Regexp
         return false unless el.match(parameter)
       elsif parameter.is_a? String
@@ -51,9 +52,9 @@ module Enumerable
   end
 
   def my_any?(parameter = nil)
-    return false if parameter.nil? && self.length.zero?
+    return false if parameter.nil? && length.zero?
 
-    self.my_each do |el|
+    my_each do |el|
       if parameter.is_a? Regexp
         return true if el.match(parameter)
       elsif parameter.is_a? String
@@ -70,9 +71,9 @@ module Enumerable
   end
 
   def my_none?(parameter = nil)
-    return true if parameter.nil? && self.length.zero?
+    return true if parameter.nil? && length.zero?
 
-    self.my_each do |el|
+    my_each do |el|
       if parameter.is_a? Regexp
         return false if el.match(parameter)
       elsif parameter.is_a? String
@@ -89,13 +90,13 @@ module Enumerable
   end
 
   def my_count(parameter = nil, &block)
-    return self.size unless block_given? || !parameter.nil?
+    return length unless block_given? || !parameter.nil?
 
     if !parameter.nil?
-      elements = self.my_select { |el| parameter === el }
+      elements = my_select { |el| parameter === el }
       elements.size
     else
-      self.my_select(&block).size
+      my_select(&block).size
     end
   end
 
@@ -103,7 +104,7 @@ module Enumerable
     return to_enum(:my_map) unless block_given?
 
     arr = []
-    self.my_each do |el|
+    my_each do |el|
       arr << yield(el)
     end
     arr
@@ -111,16 +112,16 @@ module Enumerable
 
   def my_inject(init = nil, sym = nil)
     init, sym = sym, init if init.is_a?(String) || init.is_a?(Symbol) && sym.nil?
-    result = init || result = self.first
+    result = init || result = first
     if (sym.is_a? Symbol) || (sym.is_a? String)
       sym = sym.id2name unless sym.is_a? String
-      self.my_each_with_index do |el, i|
+      my_each_with_index do |el, i|
         next if init.nil? && i.zero?
 
         result = result.send(sym, el)
       end
     else
-      self.my_each_with_index do |el, i|
+      my_each_with_index do |el, i|
         next if init.nil? && i.zero?
 
         result = yield(result, el)
