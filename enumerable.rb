@@ -110,7 +110,7 @@ module Enumerable
   end
 
   def my_inject(init = nil, sym = nil)
-    init, sym = sym, init if (init.is_a?(String) || init.is_a?(Symbol)) && (sym.nil?)
+    init, sym = sym, init if init.is_a?(String || init.is_a?(Symbol) && sym.nil?
     result = init || result = self.first
     if (sym.is_a? Symbol) || (sym.is_a? String)
       sym = sym.id2name unless sym.is_a? String
@@ -118,7 +118,7 @@ module Enumerable
         next if init.nil? && i.zero?
 
         result = result.send(sym, el)
-      end 
+      end
     else
       self.my_each_with_index do |el, i|
         next if init.nil? && i.zero?
