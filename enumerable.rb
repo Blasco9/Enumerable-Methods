@@ -103,7 +103,7 @@ module Enumerable
     if ((init.is_a? String) || (init.is_a? Symbol)) && (sym.nil?)
       init, sym = sym, init
     end
-    result = init || result = self[0]
+    result = init || result = self.first
     if (sym.is_a? Symbol) || (sym.is_a? String)
       sym = sym.id2name unless sym.is_a? String
       self.my_each_with_index do |el, i|
@@ -120,9 +120,3 @@ module Enumerable
     end
   end
 end
-
-def multiply_els(arr)
-  arr.my_inject(:*)
-end
-
-puts multiply_els([2,4,5])
