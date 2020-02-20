@@ -3,6 +3,7 @@
 module Enumerable
   def my_each
     return to_enum(:my_each) unless block_given?
+
     for el in self do
       yield(el)
     end
@@ -10,6 +11,7 @@ module Enumerable
 
   def my_each_with_index
     return to_enum(:my_each_with_index) unless block_given?
+
     i = 0
     arr = self.to_a
     while i < arr.size
@@ -20,6 +22,7 @@ module Enumerable
 
   def my_select
     return to_enum(:my_select) unless block_given?
+
     arr = []
     self.my_each do |el|
       arr << el if yield(el)
@@ -29,7 +32,8 @@ module Enumerable
   end
 
   def my_all?(parameter = nil)
-    return true if (parameter.nil? && self.length == 0)
+    return true if parameter.nil? && self.length.zero?
+
     self.my_each do |el|
       if parameter.is_a? Regexp
         return false unless el.match(parameter)
@@ -47,7 +51,8 @@ module Enumerable
   end
 
   def my_any?(parameter = nil)
-    return false if (parameter.nil? && self.length == 0)
+    return false if parameter.nil? && self.length.zero?
+
     self.my_each do |el|
       if parameter.is_a? Regexp
         return true if el.match(parameter)
@@ -57,15 +62,16 @@ module Enumerable
         return true if el === parameter
       elsif block_given?
         return true if yield(el)
-      else
-        return true if el
+      elsif el
+        return true
       end
     end
     false
   end
 
   def my_none?(parameter = nil)
-    return true if (parameter.nil? && self.length == 0)
+    return true if parameter.nil? && self.length.zero?
+
     self.my_each do |el|
       if parameter.is_a? Regexp
         return false if el.match(parameter)
@@ -75,8 +81,8 @@ module Enumerable
         return false if el === parameter
       elsif block_given?
         return false if yield(el)
-      else
-        return false if el
+      elsif el
+        return false
       end
     end
     true
@@ -84,7 +90,8 @@ module Enumerable
 
   def my_count(parameter = nil, &block)
     return self.size unless block_given? || !parameter.nil?
-    unless parameter.nil?
+
+    if !parameter.nil?
       elements = self.my_select { |el| parameter === el }
       elements.size
     else
@@ -94,6 +101,7 @@ module Enumerable
 
   def my_map
     return to_enum(:my_map) unless block_given?
+
     arr = []
     self.my_each do |el|
       arr << yield(el)
@@ -102,7 +110,7 @@ module Enumerable
   end
 
   def my_inject(init = nil, sym = nil)
-    if ((init.is_a? String) || (init.is_a? Symbol)) && (sym.nil?)
+    if (init.is_a? String || init.is_a? Symbol) && (sym.nil?)
       init, sym = sym, init
     end
     result = init || result = self.first
@@ -122,3 +130,6 @@ module Enumerable
     end
   end
 end
+
+# rubocop: enable Style/CaseEquality
+# rubocop: enable Metrics/ModuleLength, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
