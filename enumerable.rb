@@ -98,4 +98,31 @@ module Enumerable
     end
     arr
   end
+
+  def my_inject(init = nil, sym = nil)
+    if ((init.is_a? String) || (init.is_a? Symbol)) && (sym.nil?)
+      init, sym = sym, init
+    end
+    result = init || result = self[0]
+    if (sym.is_a? Symbol) || (sym.is_a? String)
+      sym = sym.id2name unless sym.is_a? String
+      self.my_each_with_index do |el, i|
+        next if (init.nil? && i == 0)
+        result = result.send(sym, el)
+      end
+      result
+    else
+      self.my_each_with_index do |el, i|
+        next if (init.nil? && i == 0)
+        result = yield(result, el)
+      end
+      result
+    end
+  end
 end
+
+def multiply_els(arr)
+  arr.my_inject(:*)
+end
+
+puts multiply_els([2,4,5])
