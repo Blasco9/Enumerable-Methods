@@ -79,4 +79,14 @@ module Enumerable
     end
     true
   end
+
+  def my_count(parameter = nil, &block)
+    return self.size unless block_given? || !parameter.nil?
+    unless parameter.nil?
+      elements = self.my_select { |el| parameter === el }
+      elements.size
+    else
+      self.my_select(&block).size
+    end
+  end
 end
