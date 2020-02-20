@@ -61,4 +61,22 @@ module Enumerable
     end
     false
   end
+
+  def my_none?(parameter = nil)
+    return true if (parameter.nil? && self.length == 0)
+    self.my_each do |el|
+      if parameter.is_a? Regexp
+        return false if el.match(parameter)
+      elsif parameter.is_a? String
+        return false if el === parameter
+      elsif parameter.is_a? Numeric
+        return false if el === parameter
+      elsif block_given?
+        return false if yield(el)
+      else
+        return false if el
+      end
+    end
+    true
+  end
 end
