@@ -25,4 +25,40 @@ module Enumerable
     arr = arr.to_h if Hash === self
     arr
   end
+
+  def my_all?(parameter = nil)
+    return true if (parameter.nil? && self.length == 0)
+    self.my_each do |el|
+      if parameter.is_a? Regexp
+        return false unless el.match(parameter)
+      elsif parameter.is_a? String
+        return false unless el === parameter
+      elsif parameter.is_a? Numeric
+        return false unless el === parameter
+      elsif block_given?
+        return false unless yield(el)
+      else
+        return false unless el
+      end
+    end
+    true
+  end
+
+  def my_any?(parameter = nil)
+    return false if (parameter.nil? && self.length == 0)
+    self.my_each do |el|
+      if parameter.is_a? Regexp
+        return true if el.match(parameter)
+      elsif parameter.is_a? String
+        return true if el === parameter
+      elsif parameter.is_a? Numeric
+        return true if el === parameter
+      elsif block_given?
+        return true if yield(el)
+      else
+        return true if el
+      end
+    end
+    false
+  end
 end
