@@ -35,59 +35,41 @@ module Enumerable
     arr
   end
 
-  def my_all?(parameter = nil)
-    return true if parameter.nil? && length.zero?
-
-    my_each do |el|
-      if parameter.is_a? Regexp
-        return false unless el.match(parameter)
-      elsif parameter.is_a? String
-        return false unless el === parameter
-      elsif parameter.is_a? Numeric
-        return false unless el === parameter
-      elsif block_given?
-        return false unless yield(el)
-      else
-        return false unless el
-      end
+  def my_all?(*parameter)
+    return true if length.zero?
+  
+    if !parameter[0].nil?
+      my_each { |el| return false unless parameter[0] === el }
+    elsif block_given?
+      my_each { |el| return false unless yield(el) }
+    else
+      my_each { |el| return false unless el }
     end
     true
   end
 
-  def my_any?(parameter = nil)
-    return false if parameter.nil? && length.zero?
-
-    my_each do |el|
-      if parameter.is_a? Regexp
-        return true if el.match(parameter)
-      elsif parameter.is_a? String
-        return true if el === parameter
-      elsif parameter.is_a? Numeric
-        return true if el === parameter
-      elsif block_given?
-        return true if yield(el)
-      elsif el
-        return true
-      end
+  def my_any?(*parameter)
+    return false if length.zero?
+  
+    if !parameter[0].nil?
+      my_each { |el| return true if parameter[0] === el }
+    elsif block_given?
+      my_each { |el| return true if yield(el) }
+    else
+      my_each { |el| return true if el }
     end
     false
   end
 
-  def my_none?(parameter = nil)
-    return true if parameter.nil? && length.zero?
+  def my_none?(*parameter)
+    return true if length.zero?
 
-    my_each do |el|
-      if parameter.is_a? Regexp
-        return false if el.match(parameter)
-      elsif parameter.is_a? String
-        return false if el === parameter
-      elsif parameter.is_a? Numeric
-        return false if el === parameter
-      elsif block_given?
-        return false if yield(el)
-      elsif el
-        return false
-      end
+    if !parameter[0].nil?
+      my_each { |el| return false if parameter[0] === el }
+    elsif block_given?
+      my_each { |el| return false if yield(el) }
+    else
+      my_each { |el| return false if el }
     end
     true
   end
@@ -132,6 +114,10 @@ module Enumerable
     end
     result
   end
+end
+
+def multiply_els(arr)
+  arr.my_inject { |acc, el| acc * el }
 end
 
 # rubocop: enable Style/CaseEquality
