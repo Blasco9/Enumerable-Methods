@@ -1,5 +1,5 @@
 # rubocop: disable Style/CaseEquality
-# rubocop: disable Metrics/ModuleLength, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
+# rubocop: disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 module Enumerable
   def my_each
     return to_enum(:my_each) unless block_given?
@@ -37,7 +37,7 @@ module Enumerable
 
   def my_all?(*parameter)
     return true if length.zero?
-  
+
     if !parameter[0].nil?
       my_each { |el| return false unless parameter[0] === el }
     elsif block_given?
@@ -50,7 +50,7 @@ module Enumerable
 
   def my_any?(*parameter)
     return false if length.zero?
-  
+
     if !parameter[0].nil?
       my_each { |el| return true if parameter[0] === el }
     elsif block_given?
@@ -121,4 +121,4 @@ def multiply_els(arr)
 end
 
 # rubocop: enable Style/CaseEquality
-# rubocop: enable Metrics/ModuleLength, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
+# rubocop: enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
