@@ -1,11 +1,11 @@
 require './enumerable.rb'
 
 RSpec.describe Enumerable do
-  let(:arr) { [1,2,3] }
+  let(:arr) { [1, 2, 3] }
   let(:hash) { { a: 1, b: 2, c: 3 } }
-  let(:mix_arr) { [1, "two", nil, true, false] }
-  let(:truthy_arr) { [1, "two", true] }
-  let(:falsy_arr) { [false, nil, !true] }
+  let(:mix_arr) { [1, 'two', nil, true, false] }
+  let(:truthy_arr) { [1, 'two', true] }
+  let(:falsy_arr) { [false, nil] }
 
   describe '#my_each' do
     it 'returns an enumerator if no block has been given' do
@@ -14,7 +14,7 @@ RSpec.describe Enumerable do
 
     it 'calls the given block for each element of the collection' do
       counter = 0
-      arr.my_each { |n| counter += 1 }
+      arr.my_each { counter += 1 }
       expect(counter).to eql(arr.length)
     end
 
@@ -34,13 +34,13 @@ RSpec.describe Enumerable do
 
     it 'calls the given block for each element of the collection' do
       counter = 0
-      arr.my_each_with_index { |n| counter += 1 }
+      arr.my_each_with_index { counter += 1 }
       expect(counter).to eql(arr.length)
     end
 
     it 'passes the index of the current element to the block' do
       counter = 0
-      arr.my_each_with_index do |n, i|
+      arr.my_each_with_index do |_n, i|
         expect(counter).to eql(i)
         counter += 1
       end
@@ -70,7 +70,7 @@ RSpec.describe Enumerable do
         b: 2,
         c: 3
       }
-      expect(hash.my_select { |k, v| v > 1 }).to eql(filtered_hash)
+      expect(hash.my_select { |_k, v| v > 1 }).to eql(filtered_hash)
     end
 
     it 'should return the truthy elements if no condition is given in the block' do
@@ -86,12 +86,12 @@ RSpec.describe Enumerable do
     it 'It should return true whether it founds an element that match a condition given in the block.' do
       expect(arr.my_all? { |item| item < 4 }).to be true
     end
-  
+
     it 'It should works with regex, if the regex passed as an argument match all the elements it should return true.' do
-      expect(%w[ant bear cat].my_any?(/a/)).to be true 
+      expect(%w[ant bear cat].my_any?(/a/)).to be true
     end
 
-    it 'It should work with class names, it should return true if all the elements are an instance or child  of that class.' do
+    it 'It should return true if all the elements are an instance or child of that class.' do
       expect(arr.my_all?(Numeric)).to be true
     end
 
@@ -100,10 +100,10 @@ RSpec.describe Enumerable do
     end
 
     it 'It should works with hashes.' do
-      expect(hash.my_all? { |k, v| v < 4 }).to be true
+      expect(hash.my_all? { |_k, v| v < 4 }).to be true
     end
   end
-  
+
   describe '#my_any?' do
     it 'It should return true if any of the elements are true.' do
       expect(mix_arr.my_any?).to be true
@@ -114,19 +114,19 @@ RSpec.describe Enumerable do
     end
 
     it 'It should return true if any of the elements match a condition given in the block.' do
-      expect(mix_arr.my_any? { |item| item.nil? }).to be true
+      expect(mix_arr.my_any?(&:nil?)).to be true
     end
 
-    it 'It should works with regex, if any of the elements match the condition given in the block should returns true.' do
+    it 'If any of the elements match the regex given in the block should returns true.' do
       expect(%w[ant bear cat].my_any?(/b/)).to be true
     end
 
-    it 'It should work with class names, it should return true if any of the elements are an instance or child of that class.' do
+    it 'It should return true if any of the elements are an instance or child of that class.' do
       expect(truthy_arr.my_any?(Numeric)).to be true
     end
 
     it 'It should works with hashes.' do
-      expect(hash.my_any? { |k, v| v > 2 }).to be true
+      expect(hash.my_any? { |_k, v| v > 2 }).to be true
     end
   end
 
@@ -143,16 +143,16 @@ RSpec.describe Enumerable do
       expect(mix_arr.my_none?(/d/)).to be true
     end
 
-    it 'It should work with class names, it should return true if none of the elements are an instance or child of that class.' do
+    it 'It should return true if none of the elements are an instance or child of that class.' do
       expect(arr.my_none?(String)).to be true
     end
 
-    it "It should return true if there are none items." do
+    it 'It should return true if there are none items.' do
       expect([].my_none?).to be true
     end
 
     it 'It should works with hashes.' do
-      expect(hash.my_none? { |k, v| v > 4 }).to be true
+      expect(hash.my_none? { |_k, v| v > 4 }).to be true
     end
   end
 
@@ -180,25 +180,25 @@ RSpec.describe Enumerable do
     end
 
     it 'should work in hashes the same as in arrays' do
-      expect(hash.my_map { |k, v| v * 2 }).to eql([2, 4, 6])
+      expect(hash.my_map { |_k, v| v * 2 }).to eql([2, 4, 6])
     end
   end
 
   describe '#my_inject' do
-    it 'combines all the elements of the collection using the sign given as the operator if no other parameter has been passed' do
+    it 'combines all the elements of the collection using the sign given as the operator.' do
       expect(arr.my_inject(:+)).to eql(6)
     end
 
-    it 'uses the first parameter as the initial value and then combines all the elements of the collection using the sign given' do
+    it 'uses the first parameter as the initial value and then combines all the elements of the collection.' do
       expect(arr.my_inject(2, :+)).to eql(8)
     end
 
     it 'combines all the elements of the collection as specified in the block given' do
-      expect(arr.my_inject { |acc, el| acc += el }).to eql(6)
+      expect(arr.my_inject { |acc, el| acc + el }).to eql(6)
     end
 
-    it 'uses the parameter as the initial value and then combines all the elements of the collection as specified in the block given' do
-      expect(arr.my_inject(2) { |acc, el| acc += el }).to eql(8)
+    it 'combines all the elements of the collection as specified in the block given.' do
+      expect(arr.my_inject(2) { |acc, el| acc + el }).to eql(8)
     end
 
     it "returns nil if called on an empty collection and doesn't recieve an initial value or a block" do
@@ -206,20 +206,19 @@ RSpec.describe Enumerable do
     end
 
     it 'returns a hash when called on a bi-dimentional array with the correct instructions in the block' do
-      arr = [[:student, "Terrance Koar"], [:course, "Web Dev"]]
-      hash = {:student=>"Terrance Koar", :course=>"Web Dev"}
-      expect(arr.my_inject({}) do |result, element| 
-        result[element.first] = element.last 
+      arr = [[:student, 'Terrance Koar'], [:course, 'Web Dev']]
+      hash = { student: 'Terrance Koar', course: 'Web Dev' }
+      expect(arr.my_inject({}) do |result, element|
+        result[element.first] = element.last
         result
       end).to eql(hash)
     end
 
     it 'returns a filtered array when called on an array with the correct instructions in the block' do
-      expect([10, 20, 30, 5, 7, 9, 3].inject([]) do |result, element| 
+      expect([10, 20, 30, 5, 7, 9, 3].my_inject([]) do |result, element|
         result << element.to_s if element > 9
         result
-      end).to eql(["10", "20", "30"])
+      end).to eql([10.to_s, 20.to_s, 30.to_s])
     end
   end
-
 end
