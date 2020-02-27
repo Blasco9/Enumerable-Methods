@@ -77,8 +77,11 @@ module Enumerable
     if !parameter.nil?
       elements = my_select { |el| parameter === el }
       elements.size
-    else
+    elsif block_given?
       my_select(&block).size
+    else
+      elements = my_select { |el| parameter === el }
+      elements.size
     end
   end
 
@@ -93,6 +96,8 @@ module Enumerable
   end
 
   def my_inject(init = nil, sym = nil)
+    return nil if !block_given? && init.nil?
+
     init, sym = sym, init if init.is_a?(String) || init.is_a?(Symbol) && sym.nil?
     result = init || result = first
     if (sym.is_a? Symbol) || (sym.is_a? String)

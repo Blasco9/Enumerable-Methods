@@ -5,6 +5,7 @@ RSpec.describe Enumerable do
   let(:hash) { { a: 1, b: 2, c: 3 } }
   let(:mix_arr) { [1, "two", nil, true, false] }
   let(:truthy_arr) { [1, "two", true] }
+  let(:falsy_arr) { [false, nil, !true] }
 
   describe '#my_each' do
     it 'returns an enumerator if no block has been given' do
@@ -123,11 +124,15 @@ RSpec.describe Enumerable do
     it 'It should work with class names, it should return true if any of the elements are an instance or child of that class.' do
       expect(truthy_arr.my_any?(Numeric)).to be true
     end
+
+    it 'It should works with hashes.' do
+      expect(hash.my_any? { |k, v| v > 2 }).to be true
+    end
   end
 
   describe '#my_none?' do
     it "It should return true when none of it's elements are true." do
-      expect(falsy.my_none?).to be true
+      expect(falsy_arr.my_none?).to be true
     end
 
     it "It should return true when given a condition that does not match in it's elements." do
@@ -145,6 +150,76 @@ RSpec.describe Enumerable do
     it "It should return true if there are none items." do
       expect([].my_none?).to be true
     end
+
+    it 'It should works with hashes.' do
+      expect(hash.my_none? { |k, v| v > 4 }).to be true
+    end
   end
-  
+
+  describe '#my_count' do
+    it 'returns the number of elements in the collection if called without parameters or whithout giving a block' do
+      expect(arr.my_count).to eql(arr.length)
+    end
+
+    it 'returns the number of elements in the collection that match the parameter' do
+      expect(arr.my_count(Numeric)).to eql(arr.length)
+    end
+
+    it 'returns the number of elements in the collection that match the condition in the block given' do
+      expect(arr.my_count { |el| el > 1 }).to eql(2)
+    end
+  end
+
+  describe '#my_map' do
+    it 'returns an enumerator if no block has been given' do
+      expect(arr.my_map).to be_kind_of(Enumerator)
+    end
+
+    it 'returns a new array with the results of running block once for every element in the collection' do
+      expect(arr.my_map { |n| n * 2 }).to eql([2, 4, 6])
+    end
+
+    it 'should work in hashes the same as in arrays' do
+      expect(hash.my_map { |k, v| v * 2 }).to eql([2, 4, 6])
+    end
+  end
+
+  describe '#my_inject' do
+    it 'combines all the elements of the collection using the sign given as the operator if no other parameter has been passed' do
+      expect(arr.my_inject(:+)).to eql(6)
+    end
+
+    it 'uses the first parameter as the initial value and then combines all the elements of the collection using the sign given' do
+      expect(arr.my_inject(2, :+)).to eql(8)
+    end
+
+    it 'combines all the elements of the collection as specified in the block given' do
+      expect(arr.my_inject { |acc, el| acc += el }).to eql(6)
+    end
+
+    it 'uses the parameter as the initial value and then combines all the elements of the collection as specified in the block given' do
+      expect(arr.my_inject(2) { |acc, el| acc += el }).to eql(8)
+    end
+
+    it "returns nil if called on an empty collection and doesn't recieve an initial value or a block" do
+      expect([].my_inject).to eql(nil)
+    end
+
+    it 'returns a hash when called on a bi-dimentional array with the correct instructions in the block' do
+      arr = [[:student, "Terrance Koar"], [:course, "Web Dev"]]
+      hash = {:student=>"Terrance Koar", :course=>"Web Dev"}
+      expect(arr.my_inject({}) do |result, element| 
+        result[element.first] = element.last 
+        result
+      end).to eql(hash)
+    end
+
+    it 'returns a filtered array when called on an array with the correct instructions in the block' do
+      expect([10, 20, 30, 5, 7, 9, 3].inject([]) do |result, element| 
+        result << element.to_s if element > 9
+        result
+      end).to eql(["10", "20", "30"])
+    end
+  end
+
 end
