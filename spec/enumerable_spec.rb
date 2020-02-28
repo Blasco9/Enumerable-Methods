@@ -79,79 +79,79 @@ RSpec.describe Enumerable do
   end
 
   describe '#my_all?' do
-    it 'It should return true when none of the elements are false or nil.' do
+    it 'returns true if no argument nor block has been given and all the elements in the collection are truthy' do
       expect(truthy_arr.my_all?).to be true
     end
 
-    it 'It should return true whether it founds an element that match a condition given in the block.' do
-      expect(arr.my_all? { |item| item < 4 }).to be true
-    end
-
-    it 'It should works with regex, if the regex passed as an argument match all the elements it should return true.' do
-      expect(%w[ant bear cat].my_any?(/a/)).to be true
-    end
-
-    it 'It should return true if all the elements are an instance or child of that class.' do
-      expect(arr.my_all?(Numeric)).to be true
-    end
-
-    it 'It should return if the array that calls the method is empty.' do
+    it 'returns true if called on an empty collection' do
       expect([].my_all?).to be true
     end
 
-    it 'It should works with hashes.' do
+    it 'returns true if all the elements in the collection match the condition given in the block' do
+      expect(arr.my_all? { |item| item < 4 }).to be true
+    end
+
+    it 'returns true when all the elements of the collection match the given regular expression' do
+      expect(%w[ant bear cat].my_all?(/a/)).to be true
+    end
+
+    it 'returns true if all the elements of the collection are instances of the class passed or inherit from it' do
+      expect(arr.my_all?(Numeric)).to be true
+    end
+
+    it 'should work the same in hashes as it does in arrays' do
       expect(hash.my_all? { |_k, v| v < 4 }).to be true
     end
   end
 
   describe '#my_any?' do
-    it 'It should return true if any of the elements are true.' do
+    it 'returns true if no argument nor block has been given and any of the elements in the collection is truthy' do
       expect(mix_arr.my_any?).to be true
     end
 
-    it 'It should return false if the array or the hash that calls the method are empty.' do
+    it 'returns false if called on an empty collection' do
       expect([].my_any?).to be false
     end
 
-    it 'It should return true if any of the elements match a condition given in the block.' do
+    it 'returns true if any of the elements in the collection matches the condition given in the block' do
       expect(mix_arr.my_any?(&:nil?)).to be true
     end
 
-    it 'If any of the elements match the regex given in the block should returns true.' do
+    it 'returns true when any of the elements in the collection matches the given regular expression' do
       expect(%w[ant bear cat].my_any?(/b/)).to be true
     end
 
-    it 'It should return true if any of the elements are an instance or child of that class.' do
+    it 'returns true if any of the elements in the collection is an instance of the class passed or inherits from it' do
       expect(truthy_arr.my_any?(Numeric)).to be true
     end
 
-    it 'It should works with hashes.' do
+    it 'should work the same in hashes as it does in arrays' do
       expect(hash.my_any? { |_k, v| v > 2 }).to be true
     end
   end
 
   describe '#my_none?' do
-    it "It should return true when none of it's elements are true." do
+    it 'returns true if no argument nor block has been given and all the elements in the collection are falsy' do
       expect(falsy_arr.my_none?).to be true
     end
 
-    it "It should return true when given a condition that does not match in it's elements." do
-      expect(arr.my_none? { |item| item > 3 }).to be true
-    end
-
-    it "It should work with regex, when none of it's elements match it should return true." do
-      expect(mix_arr.my_none?(/d/)).to be true
-    end
-
-    it 'It should return true if none of the elements are an instance or child of that class.' do
-      expect(arr.my_none?(String)).to be true
-    end
-
-    it 'It should return true if there are none items.' do
+    it 'returns true if called on an empty collection' do
       expect([].my_none?).to be true
     end
 
-    it 'It should works with hashes.' do
+    it 'returns true if none of the elements in the collection match the condition given in the block' do
+      expect(arr.my_none? { |item| item > 3 }).to be true
+    end
+
+    it 'returns true when none of the elements in the collection match the given regular expression' do
+      expect(mix_arr.my_none?(/d/)).to be true
+    end
+
+    it 'returns true if none of the elements in the collection are instances of the class passed or inherit from it' do
+      expect(arr.my_none?(String)).to be true
+    end
+
+    it 'should work the same in hashes as it does in arrays' do
       expect(hash.my_none? { |_k, v| v > 4 }).to be true
     end
   end
@@ -179,7 +179,7 @@ RSpec.describe Enumerable do
       expect(arr.my_map { |n| n * 2 }).to eql([2, 4, 6])
     end
 
-    it 'should work in hashes the same as in arrays' do
+    it 'should work in hashes the same as it does in arrays' do
       expect(hash.my_map { |_k, v| v * 2 }).to eql([2, 4, 6])
     end
   end
