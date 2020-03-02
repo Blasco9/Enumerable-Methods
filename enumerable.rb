@@ -1,15 +1,12 @@
-# rubocop: disable Style/CaseEquality
+# rubocop: disable Style/CaseEquality, Style/For
 # rubocop: disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 module Enumerable
   def my_each
     return to_enum(:my_each) unless block_given?
 
-    i = 0
-    while i < length
-      yield(self[i])
-      i += 1
+    for el in self do
+      yield(el)
     end
-    self
   end
 
   def my_each_with_index
@@ -21,7 +18,7 @@ module Enumerable
       yield(arr[i], i)
       i += 1
     end
-    arr
+    self
   end
 
   def my_select
@@ -80,8 +77,11 @@ module Enumerable
     if !parameter.nil?
       elements = my_select { |el| parameter === el }
       elements.size
-    else
+    elsif block_given?
       my_select(&block).size
+    else
+      elements = my_select { |el| parameter === el }
+      elements.size
     end
   end
 
@@ -96,6 +96,8 @@ module Enumerable
   end
 
   def my_inject(init = nil, sym = nil)
+    return nil if !block_given? && init.nil?
+
     init, sym = sym, init if init.is_a?(String) || init.is_a?(Symbol) && sym.nil?
     result = init || result = first
     if (sym.is_a? Symbol) || (sym.is_a? String)
@@ -120,5 +122,5 @@ def multiply_els(arr)
   arr.my_inject { |acc, el| acc * el }
 end
 
-# rubocop: enable Style/CaseEquality
+# rubocop: enable Style/CaseEquality, Style/For
 # rubocop: enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
